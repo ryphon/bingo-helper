@@ -1,0 +1,273 @@
+[
+  {
+    "id": "1",
+    "name": "3 Boat Bottles",
+    "description": "",
+    "items": [
+      { "name": "Message in a bottle (Deep Wilderness)", "quantity": 3, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "2",
+    "name": "Jar of Eyes",
+    "description": "",
+    "items": [
+      { "name": "Jar of eyes", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "3",
+    "name": "Mole Bones or Pet",
+    "description": "5 Long bones or 2 Curved bones from mole (Pet completes)",
+    "items": [
+      { "name": "Long bone", "quantity": 5, "current": 0 },
+      { "name": "Curved bone", "quantity": 2, "current": 0 },
+      { "name": "Baby mole", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": true,
+    "completed": false
+  },
+  {
+    "id": "4",
+    "name": "Full Ballista",
+    "description": "Light or Heavy",
+    "items": [
+      { "name": "Ballista limbs", "quantity": 1, "current": 0 },
+      { "name": "Ballista spring", "quantity": 1, "current": 0 },
+      { "name": "Light frame", "quantity": 1, "current": 0 },
+      { "name": "Monkey tail", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "5",
+    "name": "Two Uniques from ToA",
+    "description": "Any 2 uniques (Dupes count, Gems/Thread don't)",
+    "items": [
+      { "name": "Lightbearer", "quantity": 1, "current": 0 },
+      { "name": "Elidinis' ward", "quantity": 1, "current": 0 },
+      { "name": "Masori mask", "quantity": 1, "current": 0 },
+      { "name": "Masori body", "quantity": 1, "current": 0 },
+      { "name": "Masori chaps", "quantity": 1, "current": 0 },
+      { "name": "Osmumten's fang", "quantity": 1, "current": 0 },
+      { "name": "Tumeken's shadow", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "6",
+    "name": "Dull Knife",
+    "description": "",
+    "items": [
+      { "name": "Dull knife", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "7",
+    "name": "Horn of Plenty",
+    "description": "",
+    "items": [
+      { "name": "Horn of plenty", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "8",
+    "name": "lil' Creator",
+    "description": "",
+    "items": [
+      { "name": "Lil' creator", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "9",
+    "name": "Unicorn Mask",
+    "description": "Black or White",
+    "items": [
+      { "name": "Black unicorn mask", "quantity": 1, "current": 0 },
+      { "name": "White unicorn mask", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": true,
+    "completed": false
+  },
+  {
+    "id": "10",
+    "name": "Full Wilderness Shield",
+    "description": "Complete all 3 pieces of either mage or range shield",
+    "items": [
+      { "name": "Malediction shard 1", "quantity": 1, "current": 0 },
+      { "name": "Malediction shard 2", "quantity": 1, "current": 0 },
+      { "name": "Malediction shard 3", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "11",
+    "name": "Belle's Folly",
+    "description": "Tarnished",
+    "items": [
+      { "name": "Tarnished locket", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "12",
+    "name": "Vorky",
+    "description": "The pet",
+    "items": [
+      { "name": "Vorki", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "13",
+    "name": "Dragon Full Helm",
+    "description": "",
+    "items": [
+      { "name": "Dragon full helm", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "14",
+    "name": "Abyssal Lantern",
+    "description": "",
+    "items": [
+      { "name": "Abyssal lantern", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "15",
+    "name": "Tome of Water",
+    "description": "",
+    "items": [
+      { "name": "Tome of water", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "16",
+    "name": "Seercull and Mudskipper Staff",
+    "description": "",
+    "items": [
+      { "name": "Seercull", "quantity": 1, "current": 0 },
+      { "name": "Mud battlestaff", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "17",
+    "name": "Full Sandwich Lady Outfit",
+    "description": "",
+    "items": [
+      { "name": "Sandwich lady hat", "quantity": 1, "current": 0 },
+      { "name": "Sandwich lady top", "quantity": 1, "current": 0 },
+      { "name": "Sandwich lady bottom", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "18",
+    "name": "Golden Tench",
+    "description": "",
+    "items": [
+      { "name": "Golden tench", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "19",
+    "name": "3 Fathom Pearls",
+    "description": "",
+    "items": [
+      { "name": "Fathom pearl", "quantity": 3, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "20",
+    "name": "5 Swift Albatross Feathers",
+    "description": "",
+    "items": [
+      { "name": "Swift albatross feather", "quantity": 5, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "21",
+    "name": "Dragon Hasta",
+    "description": "",
+    "items": [
+      { "name": "Dragon hasta", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "22",
+    "name": "Full Godsword",
+    "description": "All 3 shards + any hilt",
+    "items": [
+      { "name": "Godsword shard 1", "quantity": 1, "current": 0 },
+      { "name": "Godsword shard 2", "quantity": 1, "current": 0 },
+      { "name": "Godsword shard 3", "quantity": 1, "current": 0 },
+      { "name": "Armadyl hilt", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "23",
+    "name": "Fox Whistle",
+    "description": "Can be bought for 75k bark",
+    "items": [
+      { "name": "Fox whistle", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "24",
+    "name": "Quetzin",
+    "description": "",
+    "items": [
+      { "name": "Quetzin", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  },
+  {
+    "id": "25",
+    "name": "Flippers and Mudskipper Hat",
+    "description": "",
+    "items": [
+      { "name": "Flippers", "quantity": 1, "current": 0 },
+      { "name": "Mudskipper hat", "quantity": 1, "current": 0 }
+    ],
+    "orLogic": false,
+    "completed": false
+  }
+]

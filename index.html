@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSRS Bingo Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>OSRS Bingo Tracker</h1>
+            <div class="controls">
+                <button id="clearProgress">Clear Progress</button>
+                <button id="exportData">Export</button>
+                <button id="importData">Import</button>
+            </div>
+        </header>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">Completed:</span>
+                <span id="completedCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Total:</span>
+                <span id="totalCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Progress:</span>
+                <span id="progressPercent">0%</span>
+            </div>
+        </div>
+
+        <div id="bingoGrid" class="bingo-grid"></div>
+
+        <div class="add-tile-section">
+            <h2>Add Tile</h2>
+            <form id="addTileForm">
+                <input type="text" id="tileName" placeholder="Tile name" required>
+                <input type="text" id="tileDescription" placeholder="Description (optional)">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="orLogic">
+                    <span>Complete if ANY item is obtained (OR logic)</span>
+                </label>
+                <div id="itemsContainer">
+                    <div class="item-input">
+                        <div class="autocomplete-wrapper">
+                            <input type="text" class="item-name" placeholder="Item name" required autocomplete="off">
+                            <div class="autocomplete-dropdown"></div>
+                        </div>
+                        <input type="number" class="item-quantity" placeholder="Qty" value="1" min="1">
+                        <button type="button" class="remove-item">×</button>
+                    </div>
+                </div>
+                <button type="button" id="addItem">+ Add Item</button>
+                <button type="submit">Add Tile</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="tileModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalDescription"></p>
+            <div id="modalItems"></div>
+            <button id="modalToggle" class="complete-btn">Mark Complete</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
