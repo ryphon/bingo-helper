@@ -197,7 +197,44 @@ button:hover {
 .tile-description {
     font-size: 13px;
     color: #BCAAA4;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+}
+
+.tile-notes {
+    font-size: 12px;
+    color: #D7CCC8;
+    margin-bottom: 10px;
+    padding: 8px;
+    background: rgba(62, 39, 35, 0.3);
+    border-radius: 4px;
+    border-left: 3px solid #FFD700;
+    line-height: 1.4;
+}
+
+.bingo-tile.completed .tile-notes {
+    color: rgba(62, 39, 35, 0.9);
+    background: rgba(62, 39, 35, 0.2);
+}
+
+.note-link {
+    color: #64B5F6;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px dashed #64B5F6;
+}
+
+.note-link:hover {
+    color: #90CAF9;
+    border-bottom-style: solid;
+}
+
+.bingo-tile.completed .note-link {
+    color: #1976D2;
+    border-bottom-color: #1976D2;
+}
+
+.bingo-tile.completed .note-link:hover {
+    color: #0D47A1;
 }
 
 .tile-progress {
@@ -281,8 +318,33 @@ button:hover {
     background: rgba(62, 39, 35, 0.3);
     border-radius: 5px;
     font-size: 13px;
-    gap: 10px;
+    gap: 8px;
     border: 1px solid #4E342E;
+}
+
+.item-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    flex-shrink: 0;
+}
+
+.item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.item-source-label {
+    font-size: 10px;
+    color: #A1887F;
+    font-style: italic;
+}
+
+.bingo-tile.completed .item-source-label {
+    color: rgba(62, 39, 35, 0.7);
 }
 
 .bingo-tile.completed .item {
@@ -304,7 +366,6 @@ button:hover {
 }
 
 .item-name {
-    flex: 1;
     font-weight: 500;
     color: #FFD700;
     text-decoration: none;
@@ -429,7 +490,8 @@ button:hover {
 }
 
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+textarea {
     padding: 10px;
     border: 2px solid #5D4037;
     border-radius: 5px;
@@ -437,10 +499,17 @@ input[type="number"] {
     transition: border-color 0.3s;
     background: rgba(62, 39, 35, 0.3);
     color: #FFF8E1;
+    font-family: inherit;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
 }
 
 input[type="text"]:focus,
-input[type="number"]:focus {
+input[type="number"]:focus,
+textarea:focus {
     outline: none;
     border-color: #FFD700;
     background: rgba(62, 39, 35, 0.4);
@@ -454,13 +523,17 @@ input[type="number"]:focus {
 
 .item-input {
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: 1fr auto 1fr auto;
     gap: 10px;
     align-items: center;
 }
 
 .item-input input[type="number"] {
     width: 80px;
+}
+
+.item-input .item-source {
+    min-width: 150px;
 }
 
 .autocomplete-wrapper {
