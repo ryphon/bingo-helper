@@ -7,6 +7,7 @@ This directory contains Kubernetes manifests for deploying the OSRS Bingo Helper
 - A running Kubernetes cluster
 - `kubectl` configured to access your cluster
 - Docker for building the image
+- Traefik installed as your ingress controller
 
 ## Deployment Steps
 
@@ -41,7 +42,8 @@ Or deploy individually:
 ```bash
 kubectl apply -f k8s/deployment.yaml
 kubectl apply -f k8s/service.yaml
-kubectl apply -f k8s/ingress.yaml  # Optional, if you want external access
+kubectl apply -f k8s/middleware.yaml     # Traefik middlewares
+kubectl apply -f k8s/ingressroute.yaml   # Traefik IngressRoute for external access
 ```
 
 ### 4. Verify Deployment
@@ -64,13 +66,31 @@ kubectl port-forward service/bingo-helper 8080:80
 
 Then access at: http://localhost:8080
 
-#### Option B: Using Ingress (for clan mates)
+#### Option B: Using Traefik IngressRoute (for clan mates)
 
-1. Edit `k8s/ingress.yaml` and replace `bingo.example.com` with your actual domain
-2. Make sure you have an Ingress controller installed (e.g., nginx-ingress, traefik)
-3. Apply the ingress: `kubectl apply -f k8s/ingress.yaml`
-4. Configure your DNS to point to your ingress controller's IP
+1. Edit `k8s/ingressroute.yaml` and replace `bingo.example.com` with your actual domain
+2. If you want HTTPS, uncomment the TLS IngressRoute section and configure your cert resolver
+3. Apply the IngressRoute: `kubectl apply -f k8s/ingressroute.yaml`
+4. Configure your DNS to point to your Traefik load balancer IP
 5. Share the URL with your clan mates!
+
+**Optional: Enable HTTPS redirect**
+
+To automatically redirect HTTP to HTTPS, update your IngressRoute to use the redirect middleware:
+
+```yaml
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`bingo.example.com`)
+      kind: Rule
+      middlewares:
+        - name: bingo-helper-redirect-https  # Add this line
+      services:
+        - name: bingo-helper
+          port: 80
+```
 
 #### Option C: LoadBalancer (if supported by your cluster)
 
@@ -107,6 +127,25 @@ To remove all resources:
 kubectl delete -f k8s/
 ```
 
+## Traefik-Specific Commands
+
+Check IngressRoute status:
+```bash
+kubectl get ingressroute
+kubectl describe ingressroute bingo-helper
+```
+
+Check middlewares:
+```bash
+kubectl get middleware
+```
+
+View Traefik dashboard (if enabled):
+```bash
+kubectl port-forward -n traefik $(kubectl get pods -n traefik --selector "app.kubernetes.io/name=traefik" --output=name) 9000:9000
+```
+Then access at: http://localhost:9000/dashboard/
+
 ## Troubleshooting
 
 View logs:
@@ -122,4 +161,9 @@ kubectl describe pods -l app=bingo-helper
 Get events:
 ```bash
 kubectl get events --sort-by='.lastTimestamp'
+```
+
+Check Traefik logs:
+```bash
+kubectl logs -n traefik -l app.kubernetes.io/name=traefik
 ```
