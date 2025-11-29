@@ -3,6 +3,7 @@ class BingoTracker {
         this.tiles = this.loadTiles();
         this.currentTile = null;
         this.items = [];
+        this.editingTileId = null;
         this.init();
         this.loadItemDatabase();
     }
@@ -56,10 +57,12 @@ class BingoTracker {
         const grid = document.getElementById('bingoGrid');
         grid.innerHTML = '';
 
-        this.tiles.forEach(tile => {
+        this.tiles.forEach((tile, index) => {
             const tileEl = document.createElement('div');
             tileEl.className = `bingo-tile ${tile.completed ? 'completed' : ''}`;
             tileEl.dataset.id = tile.id;
+            tileEl.dataset.index = index;
+            tileEl.draggable = true;
 
             const progress = this.calculateTileProgress(tile);
 
@@ -97,13 +100,7 @@ class BingoTracker {
                 </div>
             `;
 
-            tileEl.addEventListener('click', (e) => {
-                if (!e.target.classList.contains('delete-tile') &&
-                    !e.target.classList.contains('edit-tile') &&
-                    !e.target.classList.contains('item-wiki-link')) {
-                    this.openModal(tile.id);
-                }
-            });
+            // No click handler needed - all interactions on tile itself
 
             grid.appendChild(tileEl);
         });
@@ -121,6 +118,78 @@ class BingoTracker {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.editTile(btn.dataset.id);
+            });
+        });
+
+        // Add inline item control listeners
+        document.querySelectorAll('.item-btn-inline').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const tileId = btn.dataset.tileId;
+                const itemIdx = parseInt(btn.dataset.itemIdx);
+                const tile = this.tiles.find(t => t.id === tileId);
+
+                if (!tile) return;
+
+                const item = tile.items[itemIdx];
+                if (btn.classList.contains('inc') && item.current < item.quantity) {
+                    item.current++;
+                } else if (btn.classList.contains('dec') && item.current > 0) {
+                    item.current--;
+                }
+
+                this.updateTileCompletion(tile);
+                this.saveTiles();
+                this.renderGrid();
+                this.updateStats();
+            });
+        });
+
+        // Add drag and drop listeners
+        let draggedElement = null;
+
+        document.querySelectorAll('.bingo-tile').forEach(tile => {
+            tile.addEventListener('dragstart', (e) => {
+                draggedElement = tile;
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', tile.dataset.index);
+                setTimeout(() => tile.classList.add('dragging'), 0);
+            });
+
+            tile.addEventListener('dragend', (e) => {
+                tile.classList.remove('dragging');
+                document.querySelectorAll('.bingo-tile').forEach(t => t.classList.remove('drag-over'));
+            });
+
+            tile.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+
+                if (draggedElement !== tile) {
+                    const grid = document.getElementById('bingoGrid');
+                    const allTiles = [...grid.querySelectorAll('.bingo-tile:not(.dragging)')];
+                    const draggingIndex = parseInt(draggedElement.dataset.index);
+                    const targetIndex = allTiles.indexOf(tile);
+
+                    if (targetIndex > -1) {
+                        const afterElement = draggingIndex < targetIndex ?
+                            tile.nextElementSibling : tile;
+                        grid.insertBefore(draggedElement, afterElement);
+                    }
+                }
+            });
+
+            tile.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                const toIndex = parseInt(tile.dataset.index);
+
+                if (fromIndex !== toIndex) {
+                    const [movedTile] = this.tiles.splice(fromIndex, 1);
+                    this.tiles.splice(toIndex, 0, movedTile);
+                    this.saveTiles();
+                    this.renderGrid();
+                }
             });
         });
     }
@@ -250,6 +319,52 @@ class BingoTracker {
         }
     }
 
+    editTile(tileId) {
+        const tile = this.tiles.find(t => t.id === tileId);
+        if (!tile) return;
+
+        // Store that we're editing and preserve progress
+        this.editingTileId = tileId;
+
+        // Populate form with tile data
+        document.getElementById('tileName').value = tile.name;
+        document.getElementById('tileDescription').value = tile.description || '';
+        document.getElementById('orLogic').checked = tile.orLogic || false;
+
+        // Clear and populate items
+        const container = document.getElementById('itemsContainer');
+        container.innerHTML = '';
+
+        tile.items.forEach((item, idx) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item-input';
+            itemDiv.innerHTML = `
+                <div class="autocomplete-wrapper">
+                    <input type="text" class="item-name" placeholder="Item name" required autocomplete="off" value="${item.name}">
+                    <div class="autocomplete-dropdown"></div>
+                </div>
+                <input type="number" class="item-quantity" placeholder="Qty" value="${item.quantity}" min="1">
+                <button type="button" class="remove-item">×</button>
+            `;
+            container.appendChild(itemDiv);
+
+            itemDiv.querySelector('.remove-item').addEventListener('click', () => {
+                if (container.children.length > 1) {
+                    itemDiv.remove();
+                }
+            });
+
+            this.setupAutocomplete(itemDiv.querySelector('.item-name'));
+        });
+
+        // Update button text
+        const submitBtn = document.querySelector('#addTileForm button[type="submit"]');
+        submitBtn.textContent = 'Update Tile';
+
+        // Scroll to form
+        document.getElementById('addTileForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
     updateStats() {
         const completed = this.tiles.filter(t => t.completed).length;
         const total = this.tiles.length;
@@ -323,14 +438,40 @@ class BingoTracker {
             })).filter(item => item.name);
 
             if (name && items.length > 0) {
-                this.tiles.push({
-                    id: Date.now().toString(),
-                    name,
-                    description,
-                    items,
-                    orLogic,
-                    completed: false
-                });
+                if (this.editingTileId) {
+                    // Update existing tile
+                    const tileIndex = this.tiles.findIndex(t => t.id === this.editingTileId);
+                    if (tileIndex !== -1) {
+                        const existingTile = this.tiles[tileIndex];
+                        // Preserve current progress
+                        items.forEach((newItem, idx) => {
+                            if (existingTile.items[idx]) {
+                                newItem.current = existingTile.items[idx].current;
+                            }
+                        });
+
+                        this.tiles[tileIndex] = {
+                            ...existingTile,
+                            name,
+                            description,
+                            items,
+                            orLogic
+                        };
+
+                        this.updateTileCompletion(this.tiles[tileIndex]);
+                    }
+                    this.editingTileId = null;
+                } else {
+                    // Add new tile
+                    this.tiles.push({
+                        id: Date.now().toString(),
+                        name,
+                        description,
+                        items,
+                        orLogic,
+                        completed: false
+                    });
+                }
 
                 this.saveTiles();
                 this.renderGrid();
@@ -349,6 +490,10 @@ class BingoTracker {
                         <button type="button" class="remove-item">×</button>
                     </div>
                 `;
+
+                // Reset button text
+                const submitBtn = document.querySelector('#addTileForm button[type="submit"]');
+                submitBtn.textContent = 'Add Tile';
 
                 // Re-attach remove listener and autocomplete
                 container.querySelector('.remove-item').addEventListener('click', (e) => {
