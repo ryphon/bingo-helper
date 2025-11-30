@@ -773,6 +773,150 @@ textarea:focus {
     }
 }
 
+/* Session Sharing Section */
+.session-section {
+    background: linear-gradient(to bottom, #6D4C41 0%, #4E342E 100%);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 215, 0, 0.3);
+    border: 2px solid #8D6E63;
+}
+
+.session-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.session-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.session-status {
+    font-size: 14px;
+    color: #BCAAA4;
+}
+
+.session-code {
+    font-size: 20px;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.session-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.session-btn {
+    padding: 10px 20px;
+    border: 2px solid #5D4037;
+    border-radius: 5px;
+    background: linear-gradient(to bottom, #66BB6A 0%, #388E3C 100%);
+    color: #FFF8E1;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.session-btn:hover {
+    background: linear-gradient(to bottom, #81C784 0%, #66BB6A 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+.session-btn#leaveSession {
+    background: linear-gradient(to bottom, #E53935 0%, #B71C1C 100%);
+}
+
+.session-btn#leaveSession:hover {
+    background: linear-gradient(to bottom, #EF5350 0%, #E53935 100%);
+}
+
+/* Modal Forms */
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="password"] {
+    width: 100%;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal-buttons button {
+    flex: 1;
+}
+
+.modal-buttons .cancel-btn {
+    background: linear-gradient(to bottom, #757575 0%, #424242 100%);
+    border-color: #212121;
+}
+
+.modal-buttons .cancel-btn:hover {
+    background: linear-gradient(to bottom, #9E9E9E 0%, #757575 100%);
+}
+
+/* Toast Notifications */
+.toast {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, #6D4C41 0%, #4E342E 100%);
+    color: #FFF8E1;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    border: 2px solid #8D6E63;
+    z-index: 10000;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    min-width: 300px;
+    text-align: center;
+}
+
+.toast.show {
+    display: block;
+    animation: slideUp 0.3s ease-out;
+}
+
+.toast.success {
+    border-color: #66BB6A;
+}
+
+.toast.error {
+    border-color: #E53935;
+}
+
+@keyframes slideUp {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
 @media (max-width: 640px) {
     .bingo-grid {
         grid-template-columns: 1fr;
@@ -790,5 +934,18 @@ textarea:focus {
     .stats {
         flex-direction: column;
         gap: 15px;
+    }
+
+    .session-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .session-buttons {
+        width: 100%;
+    }
+
+    .session-btn {
+        flex: 1;
     }
 }

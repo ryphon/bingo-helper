@@ -1,11 +1,19 @@
 class BingoTracker {
     constructor() {
-        this.tiles = this.loadTiles();
+        // Session management
+        this.API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api';
+        this.sessionCode = localStorage.getItem('sessionCode') || null;
+        this.sessionPassword = localStorage.getItem('sessionPassword') || null;
+        this.isSessionProtected = false;
+
+        this.tiles = [];
         this.currentTile = null;
         this.items = [];
         this.editingTileId = null;
+
         this.init();
         this.loadItemDatabase();
+        this.initializeSession();
     }
 
     async loadItemDatabase() {
@@ -34,13 +42,78 @@ class BingoTracker {
         return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="note-link" onclick="event.stopPropagation()">$1</a>');
     }
 
-    loadTiles() {
+    async loadTiles() {
+        // If we have a session code, load from backend
+        if (this.sessionCode) {
+            try {
+                const response = await fetch(`${this.API_URL}/session/${this.sessionCode}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    this.isSessionProtected = data.isProtected;
+                    this.updateSessionUI();
+                    return data.tiles || this.getDefaultTiles();
+                } else {
+                    this.showToast('Failed to load session', 'error');
+                    return this.loadFromLocalStorage();
+                }
+            } catch (error) {
+                console.error('Error loading session:', error);
+                this.showToast('Loading from local storage (offline)', 'error');
+                return this.loadFromLocalStorage();
+            }
+        }
+
+        // No session code, load from localStorage
+        return this.loadFromLocalStorage();
+    }
+
+    loadFromLocalStorage() {
         const saved = localStorage.getItem('bingoTiles');
         return saved ? JSON.parse(saved) : this.getDefaultTiles();
     }
 
-    saveTiles() {
+    async saveTiles() {
+        // Always save to localStorage as backup
         localStorage.setItem('bingoTiles', JSON.stringify(this.tiles));
+
+        // If we have a session code, also save to backend
+        if (this.sessionCode) {
+            try {
+                const body = {
+                    tiles: this.tiles
+                };
+
+                // Add password if session is protected
+                if (this.sessionPassword) {
+                    body.password = this.sessionPassword;
+                }
+
+                const response = await fetch(`${this.API_URL}/session/${this.sessionCode}/save`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.status === 401) {
+                    // Password required
+                    const password = prompt('This session is password protected. Enter password:');
+                    if (password) {
+                        this.sessionPassword = password;
+                        localStorage.setItem('sessionPassword', password);
+                        return this.saveTiles(); // Retry with password
+                    }
+                } else if (!response.ok) {
+                    this.showToast('Failed to sync with server', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving to backend:', error);
+                // Silently fail - data is still saved locally
+            }
+        }
     }
 
     getDefaultTiles() {
@@ -597,6 +670,243 @@ class BingoTracker {
             };
             input.click();
         });
+
+        // Session management buttons
+        document.getElementById('createSession').addEventListener('click', () => this.createSession());
+        document.getElementById('joinSession').addEventListener('click', () => this.openJoinModal());
+        document.getElementById('leaveSession').addEventListener('click', () => this.leaveSession());
+        document.getElementById('claimSession').addEventListener('click', () => this.openClaimModal());
+
+        // Join session modal
+        const joinModal = document.getElementById('joinSessionModal');
+        const joinForm = document.getElementById('joinSessionForm');
+        joinModal.querySelector('.close').addEventListener('click', () => {
+            joinModal.style.display = 'none';
+        });
+        joinModal.querySelector('.cancel-btn').addEventListener('click', () => {
+            joinModal.style.display = 'none';
+        });
+        joinForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const code = document.getElementById('joinSessionCode').value;
+            const password = document.getElementById('joinSessionPassword').value;
+            this.joinSession(code, password);
+            joinModal.style.display = 'none';
+        });
+
+        // Claim session modal
+        const claimModal = document.getElementById('claimSessionModal');
+        const claimForm = document.getElementById('claimSessionForm');
+        claimModal.querySelector('.close').addEventListener('click', () => {
+            claimModal.style.display = 'none';
+        });
+        claimModal.querySelector('.cancel-btn').addEventListener('click', () => {
+            claimModal.style.display = 'none';
+        });
+        claimForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('claimPassword').value;
+            const confirm = document.getElementById('claimPasswordConfirm').value;
+            if (password !== confirm) {
+                this.showToast('Passwords do not match', 'error');
+                return;
+            }
+            this.claimSession(password);
+            claimModal.style.display = 'none';
+        });
+    }
+
+    // ============================================================================
+    // SESSION MANAGEMENT METHODS
+    // ============================================================================
+
+    async initializeSession() {
+        // Load tiles after checking for session
+        if (this.sessionCode) {
+            this.tiles = await this.loadTiles();
+        } else {
+            this.tiles = this.loadFromLocalStorage();
+        }
+        this.renderGrid();
+        this.updateStats();
+        this.updateSessionUI();
+    }
+
+    async createSession() {
+        try {
+            this.showToast('Creating session...', 'success');
+
+            const response = await fetch(`${this.API_URL}/session/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tiles: this.tiles })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create session');
+            }
+
+            const data = await response.json();
+            this.sessionCode = data.sessionCode;
+            this.sessionPassword = null;
+            this.isSessionProtected = false;
+
+            localStorage.setItem('sessionCode', this.sessionCode);
+            localStorage.removeItem('sessionPassword');
+
+            this.showToast(`Session created: ${this.sessionCode}`, 'success');
+            this.updateSessionUI();
+        } catch (error) {
+            console.error('Error creating session:', error);
+            this.showToast('Failed to create session', 'error');
+        }
+    }
+
+    openJoinModal() {
+        const modal = document.getElementById('joinSessionModal');
+        document.getElementById('joinSessionCode').value = '';
+        document.getElementById('joinSessionPassword').value = '';
+        document.getElementById('passwordSection').style.display = 'none';
+        modal.style.display = 'block';
+    }
+
+    async joinSession(code, password = '') {
+        try {
+            this.showToast('Joining session...', 'success');
+
+            const response = await fetch(`${this.API_URL}/session/${code}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error('Session not found');
+                }
+                throw new Error('Failed to join session');
+            }
+
+            const data = await response.json();
+
+            // If session is protected and no password provided, show password field
+            if (data.isProtected && !password) {
+                document.getElementById('passwordSection').style.display = 'block';
+                this.showToast('This session is password protected', 'error');
+                this.openJoinModal();
+                document.getElementById('joinSessionCode').value = code;
+                return;
+            }
+
+            // Load the session
+            this.sessionCode = code;
+            this.sessionPassword = password || null;
+            this.isSessionProtected = data.isProtected;
+            this.tiles = data.tiles || [];
+
+            localStorage.setItem('sessionCode', this.sessionCode);
+            if (password) {
+                localStorage.setItem('sessionPassword', password);
+            }
+
+            this.renderGrid();
+            this.updateStats();
+            this.updateSessionUI();
+            this.showToast(`Joined session: ${code}`, 'success');
+        } catch (error) {
+            console.error('Error joining session:', error);
+            this.showToast(error.message || 'Failed to join session', 'error');
+        }
+    }
+
+    leaveSession() {
+        if (!confirm('Leave this shared session? Your tiles will be saved locally.')) {
+            return;
+        }
+
+        this.sessionCode = null;
+        this.sessionPassword = null;
+        this.isSessionProtected = false;
+
+        localStorage.removeItem('sessionCode');
+        localStorage.removeItem('sessionPassword');
+
+        this.updateSessionUI();
+        this.showToast('Left session. Now using local storage.', 'success');
+    }
+
+    openClaimModal() {
+        const modal = document.getElementById('claimSessionModal');
+        document.getElementById('claimPassword').value = '';
+        document.getElementById('claimPasswordConfirm').value = '';
+        modal.style.display = 'block';
+    }
+
+    async claimSession(password) {
+        try {
+            this.showToast('Protecting session...', 'success');
+
+            const response = await fetch(`${this.API_URL}/session/${this.sessionCode}/claim`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Failed to protect session');
+            }
+
+            this.sessionPassword = password;
+            this.isSessionProtected = true;
+            localStorage.setItem('sessionPassword', password);
+
+            this.updateSessionUI();
+            this.showToast('Session is now password protected', 'success');
+        } catch (error) {
+            console.error('Error claiming session:', error);
+            this.showToast(error.message || 'Failed to protect session', 'error');
+        }
+    }
+
+    updateSessionUI() {
+        const sessionStatus = document.getElementById('sessionStatus');
+        const sessionCodeEl = document.getElementById('sessionCode');
+        const createBtn = document.getElementById('createSession');
+        const joinBtn = document.getElementById('joinSession');
+        const leaveBtn = document.getElementById('leaveSession');
+        const claimBtn = document.getElementById('claimSession');
+
+        if (this.sessionCode) {
+            sessionStatus.textContent = 'Shared Session:';
+            sessionCodeEl.textContent = this.sessionCode;
+            createBtn.style.display = 'none';
+            joinBtn.style.display = 'none';
+            leaveBtn.style.display = 'inline-block';
+
+            // Show claim button only if session is not protected
+            if (this.isSessionProtected) {
+                claimBtn.style.display = 'none';
+            } else {
+                claimBtn.style.display = 'inline-block';
+            }
+        } else {
+            sessionStatus.textContent = 'Local Session';
+            sessionCodeEl.textContent = '';
+            createBtn.style.display = 'inline-block';
+            joinBtn.style.display = 'inline-block';
+            leaveBtn.style.display = 'none';
+            claimBtn.style.display = 'none';
+        }
+    }
+
+    showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast show ${type}`;
+
+        setTimeout(() => {
+            toast.className = 'toast';
+        }, 3000);
     }
 
     setupAutocomplete(input) {

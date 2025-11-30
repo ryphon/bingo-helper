@@ -1,0 +1,185 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secret
+type: Opaque
+stringData:
+  username: bingo_user
+  password: bingo_password_change_me
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+data:
+  init.sql: |
+    -- OSRS Bingo Helper - Database Schema
+    -- Session sharing with optional password protection
+
+    -- Sessions table
+    CREATE TABLE IF NOT EXISTS sessions (
+        id SERIAL PRIMARY KEY,
+        session_code VARCHAR(12) UNIQUE NOT NULL,
+        password_hash VARCHAR(255), -- NULL = unprotected, NOT NULL = password protected
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Tiles table - stores all tiles for a session
+    CREATE TABLE IF NOT EXISTS tiles (
+        id SERIAL PRIMARY KEY,
+        session_id INTEGER REFERENCES sessions(id) ON DELETE CASCADE,
+        tile_id VARCHAR(50) NOT NULL, -- The frontend tile ID (timestamp-based)
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        notes TEXT,
+        or_logic BOOLEAN DEFAULT FALSE,
+        completed BOOLEAN DEFAULT FALSE,
+        position INTEGER DEFAULT 0, -- For ordering tiles
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(session_id, tile_id)
+    );
+
+    -- Items table - stores items for each tile
+    CREATE TABLE IF NOT EXISTS items (
+        id SERIAL PRIMARY KEY,
+        tile_id INTEGER REFERENCES tiles(id) ON DELETE CASCADE,
+        name VARCHAR(255) NOT NULL,
+        quantity INTEGER DEFAULT 1,
+        current INTEGER DEFAULT 0,
+        source VARCHAR(255),
+        position INTEGER DEFAULT 0, -- For ordering items within a tile
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Indexes for performance
+    CREATE INDEX IF NOT EXISTS idx_sessions_code ON sessions(session_code);
+    CREATE INDEX IF NOT EXISTS idx_tiles_session ON tiles(session_id);
+    CREATE INDEX IF NOT EXISTS idx_items_tile ON items(tile_id);
+
+    -- Function to update last_updated timestamp
+    CREATE OR REPLACE FUNCTION update_session_timestamp()
+    RETURNS TRIGGER AS $$
+    BEGIN
+        UPDATE sessions SET last_updated = CURRENT_TIMESTAMP WHERE id = NEW.session_id;
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    -- Trigger to update session timestamp when tiles are modified
+    CREATE TRIGGER update_session_on_tile_change
+    AFTER INSERT OR UPDATE ON tiles
+    FOR EACH ROW
+    EXECUTE FUNCTION update_session_timestamp();
+
+    -- Trigger to update session timestamp when items are modified
+    CREATE OR REPLACE FUNCTION update_session_timestamp_from_items()
+    RETURNS TRIGGER AS $$
+    BEGIN
+        UPDATE sessions
+        SET last_updated = CURRENT_TIMESTAMP
+        WHERE id = (SELECT session_id FROM tiles WHERE id = NEW.tile_id);
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE TRIGGER update_session_on_item_change
+    AFTER INSERT OR UPDATE ON items
+    FOR EACH ROW
+    EXECUTE FUNCTION update_session_timestamp_from_items();
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  serviceName: postgres-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15-alpine
+        ports:
+        - containerPort: 5432
+          name: postgres
+        env:
+        - name: POSTGRES_DB
+          value: bingo_helper
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - pg_isready -U $POSTGRES_USER
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - pg_isready -U $POSTGRES_USER
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: init-script
+        configMap:
+          name: postgres-init
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  labels:
+    app: postgres
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+    name: postgres
+  selector:
+    app: postgres
+  clusterIP: None  # Headless service for StatefulSet
