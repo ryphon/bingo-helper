@@ -10,6 +10,8 @@ class BingoTracker {
         this.currentTile = null;
         this.items = [];
         this.editingTileId = null;
+        this.currentTheme = this.loadTheme();
+        this.applyTheme(this.currentTheme);
 
         this.init();
         this.loadItemDatabase();
@@ -116,6 +118,30 @@ class BingoTracker {
         }
     }
 
+    loadTheme() {
+        const saved = localStorage.getItem('theme');
+        return saved || 'runescape';
+    }
+
+    saveTheme(theme) {
+        localStorage.setItem('theme', theme);
+    }
+
+    applyTheme(theme) {
+        document.body.className = `theme-${theme}`;
+        this.currentTheme = theme;
+    }
+
+    cycleTheme() {
+        const themes = ['runescape', 'light', 'dark'];
+        const currentIndex = themes.indexOf(this.currentTheme);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        const nextTheme = themes[nextIndex];
+
+        this.applyTheme(nextTheme);
+        this.saveTheme(nextTheme);
+    }
+
     getDefaultTiles() {
         return [
             {
@@ -188,7 +214,10 @@ class BingoTracker {
                 </div>
             `;
 
-            // No click handler needed - all interactions on tile itself
+            // Add click handler to open modal
+            tileEl.addEventListener('click', () => {
+                this.openModal(tile.id);
+            });
 
             grid.appendChild(tileEl);
         });
@@ -414,45 +443,86 @@ class BingoTracker {
         // Store that we're editing and preserve progress
         this.editingTileId = tileId;
 
-        // Populate form with tile data
-        document.getElementById('tileName').value = tile.name;
-        document.getElementById('tileDescription').value = tile.description || '';
-        document.getElementById('tileNotes').value = tile.notes || '';
-        document.getElementById('orLogic').checked = tile.orLogic || false;
+        // Open the form modal
+        this.openTileFormModal(tile);
+    }
 
-        // Clear and populate items
-        const container = document.getElementById('itemsContainer');
-        container.innerHTML = '';
+    openTileFormModal(tile = null) {
+        const modal = document.getElementById('tileFormModal');
+        const title = document.getElementById('formModalTitle');
+        const submitBtn = document.getElementById('submitTileBtn');
 
-        tile.items.forEach((item, idx) => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'item-input';
-            itemDiv.innerHTML = `
-                <div class="autocomplete-wrapper">
-                    <input type="text" class="item-name" placeholder="Item name" required autocomplete="off" value="${item.name}">
-                    <div class="autocomplete-dropdown"></div>
+        if (tile) {
+            // Editing existing tile
+            title.textContent = 'Edit Tile';
+            submitBtn.textContent = 'Update Tile';
+
+            // Populate form with tile data
+            document.getElementById('tileName').value = tile.name;
+            document.getElementById('tileDescription').value = tile.description || '';
+            document.getElementById('tileNotes').value = tile.notes || '';
+            document.getElementById('orLogic').checked = tile.orLogic || false;
+
+            // Clear and populate items
+            const container = document.getElementById('itemsContainer');
+            container.innerHTML = '';
+
+            tile.items.forEach((item, idx) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item-input';
+                itemDiv.innerHTML = `
+                    <div class="autocomplete-wrapper">
+                        <input type="text" class="item-name" placeholder="Item name" required autocomplete="off" value="${item.name}">
+                        <div class="autocomplete-dropdown"></div>
+                    </div>
+                    <input type="number" class="item-quantity" placeholder="Qty" value="${item.quantity}" min="1">
+                    <input type="text" class="item-source" placeholder="Source (optional)" value="${item.source || ''}">
+                    <button type="button" class="remove-item">×</button>
+                `;
+                container.appendChild(itemDiv);
+
+                itemDiv.querySelector('.remove-item').addEventListener('click', () => {
+                    if (container.children.length > 1) {
+                        itemDiv.remove();
+                    }
+                });
+
+                this.setupAutocomplete(itemDiv.querySelector('.item-name'));
+            });
+        } else {
+            // Adding new tile
+            title.textContent = 'Add Tile';
+            submitBtn.textContent = 'Add Tile';
+            this.editingTileId = null;
+
+            // Reset form
+            document.getElementById('tileName').value = '';
+            document.getElementById('tileDescription').value = '';
+            document.getElementById('tileNotes').value = '';
+            document.getElementById('orLogic').checked = false;
+
+            const container = document.getElementById('itemsContainer');
+            container.innerHTML = `
+                <div class="item-input">
+                    <div class="autocomplete-wrapper">
+                        <input type="text" class="item-name" placeholder="Item name" required autocomplete="off">
+                        <div class="autocomplete-dropdown"></div>
+                    </div>
+                    <input type="number" class="item-quantity" placeholder="Qty" value="1" min="1">
+                    <input type="text" class="item-source" placeholder="Source (optional)">
+                    <button type="button" class="remove-item">×</button>
                 </div>
-                <input type="number" class="item-quantity" placeholder="Qty" value="${item.quantity}" min="1">
-                <input type="text" class="item-source" placeholder="Source (optional)" value="${item.source || ''}">
-                <button type="button" class="remove-item">×</button>
             `;
-            container.appendChild(itemDiv);
 
-            itemDiv.querySelector('.remove-item').addEventListener('click', () => {
+            container.querySelector('.remove-item').addEventListener('click', (e) => {
                 if (container.children.length > 1) {
-                    itemDiv.remove();
+                    e.target.parentElement.remove();
                 }
             });
+            this.setupAutocomplete(container.querySelector('.item-name'));
+        }
 
-            this.setupAutocomplete(itemDiv.querySelector('.item-name'));
-        });
-
-        // Update button text
-        const submitBtn = document.querySelector('#addTileForm button[type="submit"]');
-        submitBtn.textContent = 'Update Tile';
-
-        // Scroll to form
-        document.getElementById('addTileForm').scrollIntoView({ behavior: 'smooth' });
+        modal.style.display = 'block';
     }
 
     updateStats() {
@@ -466,15 +536,35 @@ class BingoTracker {
     }
 
     attachEventListeners() {
-        // Modal close
-        document.querySelector('.close').addEventListener('click', () => {
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            this.cycleTheme();
+        });
+
+        // Add new tile button
+        document.getElementById('addNewTileBtn').addEventListener('click', () => {
+            this.openTileFormModal();
+        });
+
+        // Tile modal close
+        document.querySelector('#tileModal .close').addEventListener('click', () => {
             document.getElementById('tileModal').style.display = 'none';
         });
 
+        // Form modal close
+        document.getElementById('closeFormModal').addEventListener('click', () => {
+            document.getElementById('tileFormModal').style.display = 'none';
+        });
+
+        // Click outside modals to close
         window.addEventListener('click', (e) => {
-            const modal = document.getElementById('tileModal');
-            if (e.target === modal) {
-                modal.style.display = 'none';
+            const tileModal = document.getElementById('tileModal');
+            const formModal = document.getElementById('tileFormModal');
+            if (e.target === tileModal) {
+                tileModal.style.display = 'none';
+            }
+            if (e.target === formModal) {
+                formModal.style.display = 'none';
             }
         });
 
@@ -513,15 +603,15 @@ class BingoTracker {
             });
         });
 
-        // Add tile form
-        document.getElementById('addTileForm').addEventListener('submit', (e) => {
+        // Add/Edit tile form
+        document.getElementById('tileForm').addEventListener('submit', (e) => {
             e.preventDefault();
 
             const name = document.getElementById('tileName').value.trim();
             const description = document.getElementById('tileDescription').value.trim();
             const notes = document.getElementById('tileNotes').value.trim();
             const orLogic = document.getElementById('orLogic').checked;
-            const itemInputs = document.querySelectorAll('.item-input');
+            const itemInputs = document.querySelectorAll('#tileFormModal .item-input');
 
             const items = Array.from(itemInputs).map(input => ({
                 name: input.querySelector('.item-name').value.trim(),
@@ -572,51 +662,13 @@ class BingoTracker {
                 this.renderGrid();
                 this.updateStats();
 
-                // Reset form
-                e.target.reset();
-                const container = document.getElementById('itemsContainer');
-                container.innerHTML = `
-                    <div class="item-input">
-                        <div class="autocomplete-wrapper">
-                            <input type="text" class="item-name" placeholder="Item name" required autocomplete="off">
-                            <div class="autocomplete-dropdown"></div>
-                        </div>
-                        <input type="number" class="item-quantity" placeholder="Qty" value="1" min="1">
-                        <input type="text" class="item-source" placeholder="Source (optional)">
-                        <button type="button" class="remove-item">×</button>
-                    </div>
-                `;
-
-                // Reset button text
-                const submitBtn = document.querySelector('#addTileForm button[type="submit"]');
-                submitBtn.textContent = 'Add Tile';
-
-                // Re-attach remove listener and autocomplete
-                container.querySelector('.remove-item').addEventListener('click', (e) => {
-                    if (container.children.length > 1) {
-                        e.target.parentElement.parentElement.remove();
-                    }
-                });
-                this.setupAutocomplete(container.querySelector('.item-name'));
+                // Close modal
+                document.getElementById('tileFormModal').style.display = 'none';
             }
         });
 
         // Setup initial autocomplete
         this.setupAutocomplete(document.querySelector('.item-name'));
-
-        // Toggle form visibility
-        document.getElementById('toggleFormBtn').addEventListener('click', () => {
-            const form = document.getElementById('addTileForm');
-            const btn = document.getElementById('toggleFormBtn');
-
-            if (form.style.display === 'none') {
-                form.style.display = 'flex';
-                btn.textContent = '▲ Hide';
-            } else {
-                form.style.display = 'none';
-                btn.textContent = '▼ Show';
-            }
-        });
 
         // Clear progress
         document.getElementById('clearProgress').addEventListener('click', () => {
