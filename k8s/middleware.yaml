@@ -1,0 +1,25 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: bingo-helper-headers
+  labels:
+    app: bingo-helper
+spec:
+  headers:
+    customResponseHeaders:
+      X-Frame-Options: "SAMEORIGIN"
+      X-Content-Type-Options: "nosniff"
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+---
+# Redirect HTTP to HTTPS (optional)
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: bingo-helper-redirect-https
+  labels:
+    app: bingo-helper
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true

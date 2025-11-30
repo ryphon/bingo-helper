@@ -42,6 +42,7 @@
             <form id="addTileForm" class="form-content">
                 <input type="text" id="tileName" placeholder="Tile name" required>
                 <input type="text" id="tileDescription" placeholder="Description (optional)">
+                <textarea id="tileNotes" placeholder="Notes (optional) - Use [text](url) for wiki links" rows="3"></textarea>
                 <label class="checkbox-label">
                     <input type="checkbox" id="orLogic">
                     <span>Complete if ANY item is obtained (OR logic)</span>
@@ -53,6 +54,7 @@
                             <div class="autocomplete-dropdown"></div>
                         </div>
                         <input type="number" class="item-quantity" placeholder="Qty" value="1" min="1">
+                        <input type="text" class="item-source" placeholder="Source (optional)">
                         <button type="button" class="remove-item">×</button>
                     </div>
                 </div>

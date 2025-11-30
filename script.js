@@ -28,6 +28,12 @@ class BingoTracker {
         this.attachEventListeners();
     }
 
+    parseMarkdownLinks(text) {
+        if (!text) return '';
+        // Parse markdown-style links [text](url)
+        return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="note-link" onclick="event.stopPropagation()">$1</a>');
+    }
+
     loadTiles() {
         const saved = localStorage.getItem('bingoTiles');
         return saved ? JSON.parse(saved) : this.getDefaultTiles();
@@ -75,6 +81,7 @@ class BingoTracker {
                     </div>
                 </div>
                 ${tile.description ? `<p class="tile-description">${tile.description}</p>` : ''}
+                ${tile.notes ? `<div class="tile-notes">${this.parseMarkdownLinks(tile.notes)}</div>` : ''}
                 ${tile.orLogic ? `<span class="or-badge">ANY</span>` : ''}
                 <div class="tile-progress">
                     <div class="progress-bar">
@@ -86,10 +93,18 @@ class BingoTracker {
                     ${tile.items.map((item, idx) => `
                         <div class="item ${item.current >= item.quantity ? 'item-complete' : ''}">
                             ${tile.orLogic && idx > 0 ? `<span class="or-separator">OR</span>` : ''}
-                            <a href="https://oldschool.runescape.wiki/w/${encodeURIComponent(item.name.replace(/ /g, '_'))}"
-                               target="_blank"
-                               class="item-name item-wiki-link"
-                               onclick="event.stopPropagation()">${item.name}</a>
+                            <img src="https://oldschool.runescape.wiki/images/${encodeURIComponent(item.name.replace(/ /g, '_'))}.png"
+                                 alt="${item.name}"
+                                 class="item-icon"
+                                 onerror="this.style.display='none'"
+                                 onclick="event.stopPropagation()">
+                            <div class="item-info">
+                                <a href="https://oldschool.runescape.wiki/w/${encodeURIComponent(item.name.replace(/ /g, '_'))}"
+                                   target="_blank"
+                                   class="item-name item-wiki-link"
+                                   onclick="event.stopPropagation()">${item.name}</a>
+                                ${item.source ? `<span class="item-source-label">${item.source}</span>` : ''}
+                            </div>
                             <div class="item-controls-inline">
                                 <button class="item-btn-inline dec" data-tile-id="${tile.id}" data-item-idx="${idx}" onclick="event.stopPropagation()">-</button>
                                 <span class="item-count">${item.current}/${item.quantity}</span>
@@ -329,6 +344,7 @@ class BingoTracker {
         // Populate form with tile data
         document.getElementById('tileName').value = tile.name;
         document.getElementById('tileDescription').value = tile.description || '';
+        document.getElementById('tileNotes').value = tile.notes || '';
         document.getElementById('orLogic').checked = tile.orLogic || false;
 
         // Clear and populate items
@@ -344,6 +360,7 @@ class BingoTracker {
                     <div class="autocomplete-dropdown"></div>
                 </div>
                 <input type="number" class="item-quantity" placeholder="Qty" value="${item.quantity}" min="1">
+                <input type="text" class="item-source" placeholder="Source (optional)" value="${item.source || ''}">
                 <button type="button" class="remove-item">×</button>
             `;
             container.appendChild(itemDiv);
@@ -399,6 +416,7 @@ class BingoTracker {
                     <div class="autocomplete-dropdown"></div>
                 </div>
                 <input type="number" class="item-quantity" placeholder="Qty" value="1" min="1">
+                <input type="text" class="item-source" placeholder="Source (optional)">
                 <button type="button" class="remove-item">×</button>
             `;
             container.appendChild(newItem);
@@ -428,12 +446,14 @@ class BingoTracker {
 
             const name = document.getElementById('tileName').value.trim();
             const description = document.getElementById('tileDescription').value.trim();
+            const notes = document.getElementById('tileNotes').value.trim();
             const orLogic = document.getElementById('orLogic').checked;
             const itemInputs = document.querySelectorAll('.item-input');
 
             const items = Array.from(itemInputs).map(input => ({
                 name: input.querySelector('.item-name').value.trim(),
                 quantity: parseInt(input.querySelector('.item-quantity').value) || 1,
+                source: input.querySelector('.item-source').value.trim(),
                 current: 0
             })).filter(item => item.name);
 
@@ -454,6 +474,7 @@ class BingoTracker {
                             ...existingTile,
                             name,
                             description,
+                            notes,
                             items,
                             orLogic
                         };
@@ -467,6 +488,7 @@ class BingoTracker {
                         id: Date.now().toString(),
                         name,
                         description,
+                        notes,
                         items,
                         orLogic,
                         completed: false
@@ -487,6 +509,7 @@ class BingoTracker {
                             <div class="autocomplete-dropdown"></div>
                         </div>
                         <input type="number" class="item-quantity" placeholder="Qty" value="1" min="1">
+                        <input type="text" class="item-source" placeholder="Source (optional)">
                         <button type="button" class="remove-item">×</button>
                     </div>
                 `;
