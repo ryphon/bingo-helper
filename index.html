@@ -34,9 +34,12 @@
 
         <div id="bingoGrid" class="bingo-grid"></div>
 
-        <div class="add-tile-section">
-            <h2>Add Tile</h2>
-            <form id="addTileForm">
+        <div class="add-tile-section" id="addTileSection">
+            <div class="section-header">
+                <h2>Add Tile</h2>
+                <button type="button" id="toggleFormBtn" class="toggle-btn">▲ Hide</button>
+            </div>
+            <form id="addTileForm" class="form-content">
                 <input type="text" id="tileName" placeholder="Tile name" required>
                 <input type="text" id="tileDescription" placeholder="Description (optional)">
                 <textarea id="tileNotes" placeholder="Notes (optional) - Use [text](url) for wiki links" rows="3"></textarea>
