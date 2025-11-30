@@ -939,6 +939,142 @@ textarea:focus {
     }
 }
 
+/* Session Sharing Section */
+/* Session Menu Modal */
+.session-info-display {
+    background: linear-gradient(to bottom, var(--tile-bg-start), var(--tile-bg-end));
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 2px solid var(--border-color);
+}
+
+.session-status-row,
+.session-code-row {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.session-code-row:last-child {
+    margin-bottom: 0;
+}
+
+.session-code-display {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--accent-gold);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.session-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.session-action-btn {
+    padding: 12px 20px;
+    border: 2px solid var(--border-dark);
+    border-radius: 5px;
+    background: linear-gradient(to bottom, var(--btn-success-start), var(--btn-success-end));
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.session-action-btn:hover {
+    background: linear-gradient(to bottom, var(--btn-success-hover-start), var(--btn-success-hover-end));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.session-action-btn#leaveSessionModal {
+    background: linear-gradient(to bottom, var(--btn-danger-start), var(--btn-danger-end));
+}
+
+.session-action-btn#leaveSessionModal:hover {
+    background: linear-gradient(to bottom, var(--btn-danger-hover-start), var(--btn-danger-hover-end));
+}
+
+/* Modal Forms */
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="password"] {
+    width: 100%;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal-buttons button {
+    flex: 1;
+}
+
+.modal-buttons .cancel-btn {
+    background: linear-gradient(to bottom, #757575 0%, #424242 100%);
+    border-color: #212121;
+}
+
+.modal-buttons .cancel-btn:hover {
+    background: linear-gradient(to bottom, #9E9E9E 0%, #757575 100%);
+}
+
+/* Toast Notifications */
+.toast {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, #6D4C41 0%, #4E342E 100%);
+    color: #FFF8E1;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    border: 2px solid #8D6E63;
+    z-index: 10000;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    min-width: 300px;
+    text-align: center;
+}
+
+.toast.show {
+    display: block;
+    animation: slideUp 0.3s ease-out;
+}
+
+.toast.success {
+    border-color: #66BB6A;
+}
+
+.toast.error {
+    border-color: #E53935;
+}
+
+@keyframes slideUp {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
 @media (max-width: 640px) {
     .bingo-grid {
         grid-template-columns: 1fr;
@@ -956,5 +1092,18 @@ textarea:focus {
     .stats {
         flex-direction: column;
         gap: 15px;
+    }
+
+    .session-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .session-buttons {
+        width: 100%;
+    }
+
+    .session-btn {
+        flex: 1;
     }
 }

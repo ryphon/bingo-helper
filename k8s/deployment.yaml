@@ -21,6 +21,23 @@ spec:
         ports:
         - containerPort: 80
           name: http
+        env:
+        # Backend service configuration - can be overridden via ConfigMap
+        - name: BACKEND_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: bingo-config
+              key: BACKEND_HOST
+        - name: BACKEND_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: bingo-config
+              key: BACKEND_PORT
+        - name: BACKEND_PROTOCOL
+          valueFrom:
+            configMapKeyRef:
+              name: bingo-config
+              key: BACKEND_PROTOCOL
         resources:
           requests:
             memory: "64Mi"

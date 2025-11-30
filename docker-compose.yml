@@ -1,8 +1,50 @@
 version: '3.8'
 
 services:
-  bingo-helper:
+  # Frontend - Nginx serving static files
+  frontend:
     build: .
     ports:
       - "8080:80"
     restart: unless-stopped
+    depends_on:
+      - backend
+
+  # Backend API - Node.js/Express
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=bingo_helper
+      - DB_USER=bingo_user
+      - DB_PASSWORD=bingo_password
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Database - PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=bingo_helper
+      - POSTGRES_USER=bingo_user
+      - POSTGRES_PASSWORD=bingo_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bingo_user -d bingo_helper"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

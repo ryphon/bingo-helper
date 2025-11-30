@@ -12,6 +12,7 @@
             <h1>OSRS Bingo Tracker</h1>
             <div class="controls">
                 <button id="addNewTileBtn">+ New Tile</button>
+                <button id="sessionMenuBtn" title="Session sharing">🔗 Session</button>
                 <button id="themeToggle">🎨 Theme</button>
                 <button id="clearProgress">Clear Progress</button>
                 <button id="exportData">Export</button>
@@ -77,6 +78,67 @@
             </form>
         </div>
     </div>
+
+    <!-- Join Session Modal -->
+    <div id="joinSessionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Join Shared Session</h2>
+            <p>Enter the session code to join a shared bingo session.</p>
+            <form id="joinSessionForm">
+                <input type="text" id="joinSessionCode" placeholder="OSRS-XXXXXX" pattern="OSRS-[A-Z0-9]{6}" required>
+                <div id="passwordSection" style="display: none;">
+                    <input type="password" id="joinSessionPassword" placeholder="Password (if protected)">
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit">Join Session</button>
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Claim Session Modal -->
+    <div id="claimSessionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Protect Session with Password</h2>
+            <p>Set a password to prevent others from modifying this session.</p>
+            <form id="claimSessionForm">
+                <input type="password" id="claimPassword" placeholder="Enter password (min 4 characters)" minlength="4" required>
+                <input type="password" id="claimPasswordConfirm" placeholder="Confirm password" minlength="4" required>
+                <div class="modal-buttons">
+                    <button type="submit">Protect Session</button>
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Session Menu Modal -->
+    <div id="sessionMenuModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Session Management</h2>
+            <div class="session-info-display">
+                <div class="session-status-row">
+                    <strong>Status:</strong> <span id="modalSessionStatus">Local Session</span>
+                </div>
+                <div class="session-code-row" style="display: none;">
+                    <strong>Session Code:</strong> <span id="modalSessionCode" class="session-code-display"></span>
+                </div>
+            </div>
+            <div class="session-actions">
+                <button id="createSessionBtn" class="session-action-btn">Create Shared Session</button>
+                <button id="joinSessionBtn" class="session-action-btn">Join Session</button>
+                <button id="claimSessionBtn" class="session-action-btn" style="display: none;">Protect with Password</button>
+                <button id="leaveSessionBtn" class="session-action-btn" style="display: none;">Leave Session</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Message Toast -->
+    <div id="toast" class="toast"></div>
 
     <script src="script.js"></script>
 </body>
