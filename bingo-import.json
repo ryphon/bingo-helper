@@ -4,7 +4,7 @@
     "name": "3 Boat Bottles",
     "description": "",
     "items": [
-      { "name": "Message in a bottle (Deep Wilderness)", "quantity": 3, "current": 0 }
+      { "name": "Boat bottle (empty)", "quantity": 3, "current": 0 }
     ],
     "orLogic": false,
     "completed": false
@@ -21,8 +21,8 @@
   },
   {
     "id": "3",
-    "name": "Mole Bones or Pet",
-    "description": "5 Long bones or 2 Curved bones from mole (Pet completes)",
+    "name": "Giant Mole",
+    "description": "5 Long bones or 2 Curved bones or Pet",
     "items": [
       { "name": "Long bone", "quantity": 5, "current": 0 },
       { "name": "Curved bone", "quantity": 2, "current": 0 },
@@ -229,14 +229,17 @@
   {
     "id": "22",
     "name": "Full Godsword",
-    "description": "All 3 shards + any hilt",
+    "description": "All 3 shards + any hilt (OR)",
     "items": [
       { "name": "Godsword shard 1", "quantity": 1, "current": 0 },
       { "name": "Godsword shard 2", "quantity": 1, "current": 0 },
       { "name": "Godsword shard 3", "quantity": 1, "current": 0 },
-      { "name": "Armadyl hilt", "quantity": 1, "current": 0 }
+      { "name": "Armadyl hilt", "quantity": 1, "current": 0 },
+      { "name": "Bandos hilt", "quantity": 1, "current": 0 },
+      { "name": "Saradomin hilt", "quantity": 1, "current": 0 },
+      { "name": "Zamorak hilt", "quantity": 1, "current": 0 }
     ],
-    "orLogic": false,
+    "orLogic": true,
     "completed": false
   },
   {

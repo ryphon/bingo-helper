@@ -369,9 +369,36 @@ button:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.add-tile-section h2 {
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
+}
+
+.section-header h2 {
+    margin: 0;
     color: #667eea;
+}
+
+.toggle-btn {
+    padding: 8px 16px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.toggle-btn:hover {
+    background: #5568d3;
+}
+
+.form-content {
+    display: flex;
 }
 
 #addTileForm {

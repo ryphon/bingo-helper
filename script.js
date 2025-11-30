@@ -508,6 +508,20 @@ class BingoTracker {
         // Setup initial autocomplete
         this.setupAutocomplete(document.querySelector('.item-name'));
 
+        // Toggle form visibility
+        document.getElementById('toggleFormBtn').addEventListener('click', () => {
+            const form = document.getElementById('addTileForm');
+            const btn = document.getElementById('toggleFormBtn');
+
+            if (form.style.display === 'none') {
+                form.style.display = 'flex';
+                btn.textContent = '▲ Hide';
+            } else {
+                form.style.display = 'none';
+                btn.textContent = '▼ Show';
+            }
+        });
+
         // Clear progress
         document.getElementById('clearProgress').addEventListener('click', () => {
             if (confirm('Clear all progress? This will reset all item counts but keep your tiles.')) {
