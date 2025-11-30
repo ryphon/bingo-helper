@@ -940,72 +940,64 @@ textarea:focus {
 }
 
 /* Session Sharing Section */
-.session-section {
-    background: linear-gradient(to bottom, #6D4C41 0%, #4E342E 100%);
-    padding: 20px;
-    border-radius: 10px;
+/* Session Menu Modal */
+.session-info-display {
+    background: linear-gradient(to bottom, var(--tile-bg-start), var(--tile-bg-end));
+    padding: 15px;
+    border-radius: 8px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 215, 0, 0.3);
-    border: 2px solid #8D6E63;
+    border: 2px solid var(--border-color);
 }
 
-.session-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
+.session-status-row,
+.session-code-row {
+    margin-bottom: 10px;
+    font-size: 16px;
 }
 
-.session-info {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+.session-code-row:last-child {
+    margin-bottom: 0;
 }
 
-.session-status {
-    font-size: 14px;
-    color: #BCAAA4;
-}
-
-.session-code {
+.session-code-display {
     font-size: 20px;
     font-weight: bold;
-    color: #FFD700;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    color: var(--accent-gold);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.session-buttons {
+.session-actions {
     display: flex;
+    flex-direction: column;
     gap: 10px;
-    flex-wrap: wrap;
 }
 
-.session-btn {
-    padding: 10px 20px;
-    border: 2px solid #5D4037;
+.session-action-btn {
+    padding: 12px 20px;
+    border: 2px solid var(--border-dark);
     border-radius: 5px;
-    background: linear-gradient(to bottom, #66BB6A 0%, #388E3C 100%);
-    color: #FFF8E1;
+    background: linear-gradient(to bottom, var(--btn-success-start), var(--btn-success-end));
+    color: var(--text-primary);
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
     transition: all 0.3s;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.session-btn:hover {
-    background: linear-gradient(to bottom, #81C784 0%, #66BB6A 100%);
+.session-action-btn:hover {
+    background: linear-gradient(to bottom, var(--btn-success-hover-start), var(--btn-success-hover-end));
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
-.session-btn#leaveSession {
-    background: linear-gradient(to bottom, #E53935 0%, #B71C1C 100%);
+.session-action-btn#leaveSessionModal {
+    background: linear-gradient(to bottom, var(--btn-danger-start), var(--btn-danger-end));
 }
 
-.session-btn#leaveSession:hover {
-    background: linear-gradient(to bottom, #EF5350 0%, #E53935 100%);
+.session-action-btn#leaveSessionModal:hover {
+    background: linear-gradient(to bottom, var(--btn-danger-hover-start), var(--btn-danger-hover-end));
 }
 
 /* Modal Forms */

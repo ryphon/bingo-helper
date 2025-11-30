@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bingo-config
+  labels:
+    app: bingo-helper
+data:
+  # Database configuration with defaults
+  DB_HOST: "postgres-service"
+  DB_PORT: "5432"
+  DB_NAME: "bingo_helper"
+
+  # Backend service configuration
+  BACKEND_HOST: "bingo-backend-service"
+  BACKEND_PORT: "3000"
+  BACKEND_PROTOCOL: "http"

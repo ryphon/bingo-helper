@@ -24,12 +24,22 @@ spec:
         env:
         - name: PORT
           value: "3000"
+        # Database configuration - can be overridden via ConfigMap
         - name: DB_HOST
-          value: postgres-service
+          valueFrom:
+            configMapKeyRef:
+              name: bingo-config
+              key: DB_HOST
         - name: DB_PORT
-          value: "5432"
+          valueFrom:
+            configMapKeyRef:
+              name: bingo-config
+              key: DB_PORT
         - name: DB_NAME
-          value: bingo_helper
+          valueFrom:
+            configMapKeyRef:
+              name: bingo-config
+              key: DB_NAME
         - name: DB_USER
           valueFrom:
             secretKeyRef:

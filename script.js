@@ -1,7 +1,7 @@
 class BingoTracker {
     constructor() {
         // Session management
-        this.API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api';
+        this.API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000/api' : '/api';
         this.sessionCode = localStorage.getItem('sessionCode') || null;
         this.sessionPassword = localStorage.getItem('sessionPassword') || null;
         this.isSessionProtected = false;
@@ -723,11 +723,32 @@ class BingoTracker {
             input.click();
         });
 
-        // Session management buttons
-        document.getElementById('createSession').addEventListener('click', () => this.createSession());
-        document.getElementById('joinSession').addEventListener('click', () => this.openJoinModal());
-        document.getElementById('leaveSession').addEventListener('click', () => this.leaveSession());
-        document.getElementById('claimSession').addEventListener('click', () => this.openClaimModal());
+        // Session menu button
+        document.getElementById('sessionMenuBtn').addEventListener('click', () => this.openSessionMenu());
+
+        // Session menu modal
+        const sessionMenuModal = document.getElementById('sessionMenuModal');
+        sessionMenuModal.querySelector('.close').addEventListener('click', () => {
+            sessionMenuModal.style.display = 'none';
+        });
+
+        // Session management buttons in modal
+        document.getElementById('createSessionBtn').addEventListener('click', () => {
+            sessionMenuModal.style.display = 'none';
+            this.createSession();
+        });
+        document.getElementById('joinSessionBtn').addEventListener('click', () => {
+            sessionMenuModal.style.display = 'none';
+            this.openJoinModal();
+        });
+        document.getElementById('leaveSessionBtn').addEventListener('click', () => {
+            sessionMenuModal.style.display = 'none';
+            this.leaveSession();
+        });
+        document.getElementById('claimSessionBtn').addEventListener('click', () => {
+            sessionMenuModal.style.display = 'none';
+            this.openClaimModal();
+        });
 
         // Join session modal
         const joinModal = document.getElementById('joinSessionModal');
@@ -812,6 +833,12 @@ class BingoTracker {
             console.error('Error creating session:', error);
             this.showToast('Failed to create session', 'error');
         }
+    }
+
+    openSessionMenu() {
+        this.updateSessionUI(); // Refresh session info
+        const modal = document.getElementById('sessionMenuModal');
+        modal.style.display = 'block';
     }
 
     openJoinModal() {
@@ -921,31 +948,43 @@ class BingoTracker {
     }
 
     updateSessionUI() {
-        const sessionStatus = document.getElementById('sessionStatus');
-        const sessionCodeEl = document.getElementById('sessionCode');
-        const createBtn = document.getElementById('createSession');
-        const joinBtn = document.getElementById('joinSession');
-        const leaveBtn = document.getElementById('leaveSession');
-        const claimBtn = document.getElementById('claimSession');
+        // Update session menu modal content
+        const modalSessionStatus = document.getElementById('modalSessionStatus');
+        const modalSessionCode = document.getElementById('modalSessionCode');
+        const sessionCodeRow = document.querySelector('.session-code-row');
+        const createBtn = document.getElementById('createSessionModal');
+        const joinBtn = document.getElementById('joinSessionModal');
+        const leaveBtn = document.getElementById('leaveSessionModal');
+        const claimBtn = document.getElementById('claimSessionModal');
+
+        // Safety check - return if elements don't exist yet
+        if (!modalSessionStatus || !modalSessionCode || !sessionCodeRow ||
+            !createBtn || !joinBtn || !leaveBtn || !claimBtn) {
+            return;
+        }
 
         if (this.sessionCode) {
-            sessionStatus.textContent = 'Shared Session:';
-            sessionCodeEl.textContent = this.sessionCode;
+            modalSessionStatus.textContent = this.isSessionProtected
+                ? 'Shared Session (Protected)'
+                : 'Shared Session';
+            modalSessionCode.textContent = this.sessionCode;
+            sessionCodeRow.style.display = 'block';
             createBtn.style.display = 'none';
             joinBtn.style.display = 'none';
-            leaveBtn.style.display = 'inline-block';
+            leaveBtn.style.display = 'block';
 
             // Show claim button only if session is not protected
             if (this.isSessionProtected) {
                 claimBtn.style.display = 'none';
             } else {
-                claimBtn.style.display = 'inline-block';
+                claimBtn.style.display = 'block';
             }
         } else {
-            sessionStatus.textContent = 'Local Session';
-            sessionCodeEl.textContent = '';
-            createBtn.style.display = 'inline-block';
-            joinBtn.style.display = 'inline-block';
+            modalSessionStatus.textContent = 'Local Session';
+            modalSessionCode.textContent = '';
+            sessionCodeRow.style.display = 'none';
+            createBtn.style.display = 'block';
+            joinBtn.style.display = 'block';
             leaveBtn.style.display = 'none';
             claimBtn.style.display = 'none';
         }

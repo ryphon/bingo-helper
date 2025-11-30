@@ -12,28 +12,13 @@
             <h1>OSRS Bingo Tracker</h1>
             <div class="controls">
                 <button id="addNewTileBtn">+ New Tile</button>
+                <button id="sessionMenuBtn" title="Session sharing">🔗 Session</button>
                 <button id="themeToggle">🎨 Theme</button>
                 <button id="clearProgress">Clear Progress</button>
                 <button id="exportData">Export</button>
                 <button id="importData">Import</button>
             </div>
         </header>
-
-        <!-- Session Sharing Section -->
-        <div class="session-section">
-            <div class="session-controls">
-                <div class="session-info">
-                    <span id="sessionStatus" class="session-status">Local Session</span>
-                    <span id="sessionCode" class="session-code"></span>
-                </div>
-                <div class="session-buttons">
-                    <button id="createSession" class="session-btn">Create Shared Session</button>
-                    <button id="joinSession" class="session-btn">Join Session</button>
-                    <button id="claimSession" class="session-btn" style="display: none;">Protect with Password</button>
-                    <button id="leaveSession" class="session-btn" style="display: none;">Leave Session</button>
-                </div>
-            </div>
-        </div>
 
         <div class="stats">
             <div class="stat-item">
@@ -127,6 +112,28 @@
                     <button type="button" class="cancel-btn">Cancel</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Session Menu Modal -->
+    <div id="sessionMenuModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Session Management</h2>
+            <div class="session-info-display">
+                <div class="session-status-row">
+                    <strong>Status:</strong> <span id="modalSessionStatus">Local Session</span>
+                </div>
+                <div class="session-code-row" style="display: none;">
+                    <strong>Session Code:</strong> <span id="modalSessionCode" class="session-code-display"></span>
+                </div>
+            </div>
+            <div class="session-actions">
+                <button id="createSessionBtn" class="session-action-btn">Create Shared Session</button>
+                <button id="joinSessionBtn" class="session-action-btn">Join Session</button>
+                <button id="claimSessionBtn" class="session-action-btn" style="display: none;">Protect with Password</button>
+                <button id="leaveSessionBtn" class="session-action-btn" style="display: none;">Leave Session</button>
+            </div>
         </div>
     </div>
 
