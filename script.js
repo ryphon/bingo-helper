@@ -4,6 +4,8 @@ class BingoTracker {
         this.currentTile = null;
         this.items = [];
         this.editingTileId = null;
+        this.currentTheme = this.loadTheme();
+        this.applyTheme(this.currentTheme);
         this.init();
         this.loadItemDatabase();
     }
@@ -41,6 +43,30 @@ class BingoTracker {
 
     saveTiles() {
         localStorage.setItem('bingoTiles', JSON.stringify(this.tiles));
+    }
+
+    loadTheme() {
+        const saved = localStorage.getItem('theme');
+        return saved || 'runescape';
+    }
+
+    saveTheme(theme) {
+        localStorage.setItem('theme', theme);
+    }
+
+    applyTheme(theme) {
+        document.body.className = `theme-${theme}`;
+        this.currentTheme = theme;
+    }
+
+    cycleTheme() {
+        const themes = ['runescape', 'light', 'dark'];
+        const currentIndex = themes.indexOf(this.currentTheme);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        const nextTheme = themes[nextIndex];
+
+        this.applyTheme(nextTheme);
+        this.saveTheme(nextTheme);
     }
 
     getDefaultTiles() {
@@ -393,6 +419,11 @@ class BingoTracker {
     }
 
     attachEventListeners() {
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            this.cycleTheme();
+        });
+
         // Modal close
         document.querySelector('.close').addEventListener('click', () => {
             document.getElementById('tileModal').style.display = 'none';
