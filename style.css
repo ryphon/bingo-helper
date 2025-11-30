@@ -56,58 +56,58 @@ body.theme-runescape {
 }
 
 body.theme-light {
-    /* Light Theme */
-    --bg-gradient-start: #f5f5f5;
-    --bg-gradient-mid: #e0e0e0;
-    --bg-gradient-end: #eeeeee;
-    --text-primary: #000000;
-    --text-secondary: #424242;
-    --text-muted: #616161;
-    --accent-gold: #000000;
-    --accent-gold-light: #212121;
-    --accent-gold-bright: #424242;
-    --accent-orange: #000000;
-    --header-bg-start: #ffffff;
-    --header-bg-end: #fafafa;
-    --border-color: #bdbdbd;
-    --border-dark: #9e9e9e;
-    --border-darker: #757575;
-    --tile-bg-start: #ffffff;
-    --tile-bg-end: #fafafa;
-    --tile-complete-start: #4caf50;
-    --tile-complete-end: #388e3c;
-    --tile-complete-text: #ffffff;
-    --btn-primary-start: #2196f3;
-    --btn-primary-end: #1976d2;
-    --btn-primary-hover-start: #42a5f5;
-    --btn-primary-hover-end: #2196f3;
-    --btn-secondary-start: #64b5f6;
-    --btn-secondary-end: #1976d2;
-    --btn-secondary-hover-start: #90caf9;
-    --btn-secondary-hover-end: #64b5f6;
-    --btn-danger-start: #f44336;
-    --btn-danger-end: #d32f2f;
-    --btn-danger-hover-start: #ef5350;
-    --btn-danger-hover-end: #f44336;
-    --btn-success-start: #66bb6a;
-    --btn-success-end: #388e3c;
-    --btn-success-hover-start: #81c784;
-    --btn-success-hover-end: #66bb6a;
-    --input-bg: #fafafa;
-    --input-bg-focus: #ffffff;
-    --scrollbar-track: #e0e0e0;
-    --scrollbar-thumb-start: #9e9e9e;
-    --scrollbar-thumb-end: #757575;
-    --item-bg: #f5f5f5;
-    --item-border: #e0e0e0;
-    --item-complete-bg: #e8f5e9;
-    --item-complete-text: #2e7d32;
-    --item-complete-border: #66bb6a;
-    --item-source-text: #757575;
-    --link-color: #1976d2;
-    --link-hover: #1565c0;
-    --shadow-gold: rgba(0, 0, 0, 0.1);
-    --shadow-gold-strong: rgba(0, 0, 0, 0.15);
+    /* Light Theme - Ayu Light */
+    --bg-gradient-start: #FAFAFA;
+    --bg-gradient-mid: #F8F9FA;
+    --bg-gradient-end: #FAFAFA;
+    --text-primary: #5C6166;
+    --text-secondary: #828C99;
+    --text-muted: #ABB0B6;
+    --accent-gold: #F2AE49;
+    --accent-gold-light: #F9AF4F;
+    --accent-gold-bright: #FFB454;
+    --accent-orange: #FF6A00;
+    --header-bg-start: #FFFFFF;
+    --header-bg-end: #FCFCFC;
+    --border-color: #E7E8E9;
+    --border-dark: #D9DADB;
+    --border-darker: #C9CACC;
+    --tile-bg-start: #FFFFFF;
+    --tile-bg-end: #FCFCFC;
+    --tile-complete-start: #86B300;
+    --tile-complete-end: #6F9400;
+    --tile-complete-text: #FFFFFF;
+    --btn-primary-start: #399EE6;
+    --btn-primary-end: #2993D5;
+    --btn-primary-hover-start: #4CBDFF;
+    --btn-primary-hover-end: #399EE6;
+    --btn-secondary-start: #55B4D4;
+    --btn-secondary-end: #399EE6;
+    --btn-secondary-hover-start: #6CD4FF;
+    --btn-secondary-hover-end: #55B4D4;
+    --btn-danger-start: #F07171;
+    --btn-danger-end: #E65050;
+    --btn-danger-hover-start: #F28B86;
+    --btn-danger-hover-end: #F07171;
+    --btn-success-start: #86B300;
+    --btn-success-end: #6F9400;
+    --btn-success-hover-start: #A0CF00;
+    --btn-success-hover-end: #86B300;
+    --input-bg: #FFFFFF;
+    --input-bg-focus: #FFFFFF;
+    --scrollbar-track: #F3F4F5;
+    --scrollbar-thumb-start: #D0D1D2;
+    --scrollbar-thumb-end: #C0C1C2;
+    --item-bg: #F8F9FA;
+    --item-border: #E7E8E9;
+    --item-complete-bg: #E6F3D5;
+    --item-complete-text: #5A7B00;
+    --item-complete-border: #86B300;
+    --item-source-text: #ABB0B6;
+    --link-color: #399EE6;
+    --link-hover: #2993D5;
+    --shadow-gold: rgba(242, 174, 73, 0.2);
+    --shadow-gold-strong: rgba(242, 174, 73, 0.3);
 }
 
 body.theme-dark {
@@ -198,9 +198,8 @@ header {
 }
 
 header h1 {
-    color: var(--accent-gold);
+    color: var(--text-primary);
     font-size: 2em;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .controls {
@@ -213,12 +212,11 @@ button {
     border: 2px solid var(--border-dark);
     border-radius: 5px;
     background: linear-gradient(to bottom, var(--btn-primary-start) 0%, var(--btn-primary-end) 100%);
-    color: var(--text-primary);
+    color: white;
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
     transition: all 0.3s;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
@@ -254,8 +252,7 @@ button:hover {
 .stat-item span:last-child {
     font-size: 24px;
     font-weight: bold;
-    color: var(--accent-gold);
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    color: var(--text-primary);
 }
 
 .bingo-grid {
@@ -318,8 +315,7 @@ button:hover {
     flex: 1;
     font-size: 18px;
     margin-bottom: 5px;
-    color: var(--accent-gold);
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    color: var(--text-primary);
 }
 
 .tile-actions {
@@ -543,19 +539,17 @@ button:hover {
 
 .item-name {
     font-weight: 500;
-    color: var(--accent-gold);
+    color: var(--link-color);
     text-decoration: none;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .item-name:hover {
     text-decoration: underline;
-    color: var(--accent-gold-light);
+    color: var(--link-hover);
 }
 
 .bingo-tile.completed .item-name {
     color: var(--tile-complete-text);
-    text-shadow: none;
 }
 
 .item-controls-inline {
@@ -570,7 +564,7 @@ button:hover {
     padding: 0;
     font-size: 16px;
     background: linear-gradient(to bottom, var(--btn-primary-start) 0%, var(--btn-primary-end) 100%);
-    color: var(--text-primary);
+    color: white;
     border: 1px solid var(--border-dark);
     border-radius: 4px;
     cursor: pointer;
@@ -578,7 +572,6 @@ button:hover {
     align-items: center;
     justify-content: center;
     transition: background 0.2s;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .item-btn-inline:hover {
@@ -610,7 +603,6 @@ button:hover {
     font-weight: 600;
     margin-bottom: 10px;
     border: 1px solid var(--btn-success-end);
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .bingo-tile.completed .or-badge {
@@ -624,12 +616,10 @@ button:hover {
     font-weight: 600;
     color: var(--item-complete-border);
     margin-right: 8px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .bingo-tile.completed .or-separator {
     color: var(--tile-complete-text);
-    text-shadow: none;
     opacity: 0.8;
 }
 
@@ -650,21 +640,19 @@ button:hover {
 
 .section-header h2 {
     margin: 0;
-    color: var(--accent-gold);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    color: var(--text-primary);
 }
 
 .toggle-btn {
     padding: 8px 16px;
     background: linear-gradient(to bottom, var(--btn-primary-start) 0%, var(--btn-primary-end) 100%);
-    color: var(--text-primary);
+    color: white;
     border: 2px solid var(--border-dark);
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
     transition: all 0.3s;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
@@ -790,7 +778,6 @@ textarea:focus {
     align-items: center;
     justify-content: center;
     padding: 0;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .remove-item:hover {
@@ -842,13 +829,12 @@ textarea:focus {
 
 .close:hover,
 .close:focus {
-    color: var(--accent-gold);
+    color: var(--text-primary);
 }
 
 #modalTitle {
-    color: var(--accent-gold);
+    color: var(--text-primary);
     margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 #modalDescription {
@@ -878,16 +864,15 @@ textarea:focus {
 }
 
 .item-wiki-link {
-    color: var(--accent-gold);
+    color: var(--link-color);
     text-decoration: none;
     font-weight: 600;
     font-size: 16px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .item-wiki-link:hover {
     text-decoration: underline;
-    color: var(--accent-gold-light);
+    color: var(--link-hover);
 }
 
 .modal-item .item-count {

@@ -141,7 +141,10 @@ class BingoTracker {
                 </div>
             `;
 
-            // No click handler needed - all interactions on tile itself
+            // Add click handler to open modal
+            tileEl.addEventListener('click', () => {
+                this.openModal(tile.id);
+            });
 
             grid.appendChild(tileEl);
         });
