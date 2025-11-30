@@ -11,6 +11,7 @@
         <header>
             <h1>OSRS Bingo Tracker</h1>
             <div class="controls">
+                <button id="addNewTileBtn">+ New Tile</button>
                 <button id="themeToggle">🎨 Theme</button>
                 <button id="clearProgress">Clear Progress</button>
                 <button id="exportData">Export</button>
@@ -34,13 +35,25 @@
         </div>
 
         <div id="bingoGrid" class="bingo-grid"></div>
+    </div>
 
-        <div class="add-tile-section" id="addTileSection">
-            <div class="section-header">
-                <h2>Add Tile</h2>
-                <button type="button" id="toggleFormBtn" class="toggle-btn">▲ Hide</button>
-            </div>
-            <form id="addTileForm" class="form-content">
+    <!-- Tile Details Modal -->
+    <div id="tileModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalDescription"></p>
+            <div id="modalItems"></div>
+            <button id="modalToggle" class="complete-btn">Mark Complete</button>
+        </div>
+    </div>
+
+    <!-- Add/Edit Tile Modal -->
+    <div id="tileFormModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeFormModal">&times;</span>
+            <h2 id="formModalTitle">Add Tile</h2>
+            <form id="tileForm">
                 <input type="text" id="tileName" placeholder="Tile name" required>
                 <input type="text" id="tileDescription" placeholder="Description (optional)">
                 <textarea id="tileNotes" placeholder="Notes (optional) - Use [text](url) for wiki links" rows="3"></textarea>
@@ -60,18 +73,8 @@
                     </div>
                 </div>
                 <button type="button" id="addItem">+ Add Item</button>
-                <button type="submit">Add Tile</button>
+                <button type="submit" id="submitTileBtn">Add Tile</button>
             </form>
-        </div>
-    </div>
-
-    <div id="tileModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="modalTitle"></h2>
-            <p id="modalDescription"></p>
-            <div id="modalItems"></div>
-            <button id="modalToggle" class="complete-btn">Mark Complete</button>
         </div>
     </div>
 
